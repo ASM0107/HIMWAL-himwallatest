@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Not Found | HIMWAL</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/jpeg" href="LOGO.jpg">
+  <style>
+    .not-found {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .not-found-inner { max-width: 520px; }
+    .not-found-code {
+      font-family: var(--font-heading);
+      font-size: clamp(5rem, 15vw, 9rem);
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: 0.15;
+    }
+    .not-found-inner h1 { font-size: clamp(1.5rem, 4vw, 2.4rem); margin-bottom: 16px; }
+    .not-found-inner p { color: var(--color-text-light); margin-bottom: 32px; font-size: 1.05rem; }
+    .not-found-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main id="main-content">
+  <div class="not-found">
+    <div class="not-found-inner">
+      <div class="not-found-code" aria-hidden="true">404</div>
+      <h1>Page Not Found</h1>
+      <p>The page you're looking for has moved, or may never have existed. Let's get you back on track.</p>
+      <div class="not-found-actions">
+        <a href="index.html" class="btn btn-primary">Go Home</a>
+        <a href="index.html#contact" class="btn btn-secondary">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="layout.js"></script>
+<script src="scripts.js"></script>
+</body>
+</html>

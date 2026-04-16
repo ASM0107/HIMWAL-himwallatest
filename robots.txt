@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://himwal.org/sitemap.xml
