@@ -18,7 +18,7 @@
 <header class="header">
   <div class="container header-inner">
     <a href="index.html" class="logo">
-      <img src="LOGO.jpg" alt="HIMWAL Logo" width="60" height="60">
+      <img src="images/LOGO.jpg" alt="HIMWAL Logo" width="60" height="60">
       <div class="logo-text">
         <span class="logo-title">HIMWAL</span>
         <span class="logo-tagline">Himalayan Women Awareness &amp; Livelihood Society</span>
@@ -46,7 +46,7 @@
 <footer class="footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="LOGO.jpg" alt="HIMWAL Logo" class="footer-logo" width="60" height="60">
+      <img src="images/LOGO.jpg" alt="HIMWAL Logo" class="footer-logo" width="60" height="60">
       <div>
         <strong>HIMWAL</strong>
         <p>Himalayan Women Awareness &amp; Livelihood Society</p>
