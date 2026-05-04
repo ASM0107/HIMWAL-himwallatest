@@ -16,3 +16,7 @@ desktop.ini
 dist/
 build/
 node_modules/
+
+# PDF source files
+Products Listing.pdf
+*.pdf

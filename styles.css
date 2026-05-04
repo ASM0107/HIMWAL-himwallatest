@@ -1743,6 +1743,97 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ========================================
+   Product Variants (multi-option products)
+   ======================================== */
+.product-variants {
+  margin: 0 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  font-size: 0.88rem;
+}
+
+.product-variant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+  line-height: 1.4;
+  transition: background var(--transition);
+}
+
+.product-variant-item:last-child { border-bottom: none; }
+.product-variant-item:hover { background: var(--color-bg-light); }
+
+.product-variant-item .v-name {
+  color: var(--color-text);
+  flex: 1;
+}
+
+.product-variant-item .v-price {
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.product-variant-note {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-bottom: 14px;
+}
+
+/* ---- Pulses section divider (spans full grid width) ---- */
+.products-section-divider {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 36px;
+  margin: 16px 0 8px;
+}
+
+.products-section-divider-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.products-section-divider-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.products-section-divider h2 {
+  font-size: 1.6rem;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.products-section-divider p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+/* Cards without a photo: tinted banner instead */
+.product-image.product-icon-banner {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+}
+
+.product-icon-banner .product-category-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+/* ========================================
    Accessibility — Reduced Motion
    Respect OS-level animation preferences
    ======================================== */

@@ -8,10 +8,11 @@
   <!-- Open Graph / Social sharing -->
   <meta property="og:title" content="HIMWAL — Empowering Himalayan Women">
   <meta property="og:description" content="Building sustainable livelihoods and preserving culture in Uttarakhand’s remote communities.">
-  <meta property="og:image" content="https://himwal.org/images/LOGO.jpg">
-  <meta property="og:url" content="https://himwal.org/">
+  <meta property="og:image" content="https://ASM0107.github.io/HIMWAL-himwallatest/images/LOGO.jpg">
+  <meta property="og:url"   content="https://ASM0107.github.io/HIMWAL-himwallatest/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#1a5f4a">
   <!-- JSON-LD structured data -->
   <script type="application/ld+json">
   {
@@ -277,10 +278,10 @@
 <div id="site-footer"></div>
 
 <script src="layout.js"></script>
-<!-- GSAP + ScrollTrigger (entrance animations only) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="scripts.js"></script>
-<script src="hero.js"></script>
+<!-- GSAP + ScrollTrigger (deferred so they are non-render-blocking) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" defer></script>
+<script src="scripts.js" defer></script>
+<script src="hero.js" defer></script>
 </body>
 </html>

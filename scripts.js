@@ -150,6 +150,29 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   initFilter('.filter-btn', '.gallery-item');
-  initFilter('.cat-tab',    '.product-card');
+
+  // Products filter — handles both cards and the section-divider banner
+  (function () {
+    const tabs     = document.querySelectorAll('.cat-tab');
+    const cards    = document.querySelectorAll('.product-card');
+    const dividers = document.querySelectorAll('.products-section-divider');
+    if (!tabs.length) return;
+
+    tabs.forEach(tab => tab.addEventListener('click', function () {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+
+      cards.forEach(card => {
+        card.style.display =
+          (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+      });
+
+      dividers.forEach(div => {
+        div.style.display =
+          (filter === 'all' || div.dataset.category === filter) ? '' : 'none';
+      });
+    }));
+  })();
 
 });
