@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://himwal.org/sitemap.xml
+Sitemap: https://ASM0107.github.io/HIMWAL-himwallatest/sitemap.xml

@@ -9,6 +9,22 @@ const COUNTER_THRESHOLD    = 0.5;
 const FADE_THRESHOLD       = 0.1;
 const SHADOW_SCROLL_TRIGGER = 50;
 
+// Animated counter — counts from 0 up to el's data-target value
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target, 10);
+  if (Number.isNaN(target)) return;  // guard against missing/invalid data-target
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / COUNTER_DURATION_MS, 1);
+    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+    el.textContent = Math.floor(easeOutQuart * target).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target.toLocaleString();
+  }
+  requestAnimationFrame(update);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
   // Mobile menu toggle
@@ -17,30 +33,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (menuToggle && nav) {
     menuToggle.addEventListener('click', function () {
-      nav.classList.toggle('nav-open');
+      const isOpen = nav.classList.toggle('nav-open');
       this.classList.toggle('active');
+      // Keep aria-expanded in sync for screen readers
+      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
     // Close nav when clicking outside
     document.addEventListener('click', function (e) {
       if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
         nav.classList.remove('nav-open');
         menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
       }
     });
   }
 
-  // Smooth scroll
+  // Smooth scroll — guard against bare "#" which causes querySelector SyntaxError
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
+      if (!href || href === '#') return;  // nothing to scroll to
       const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
-        const headerHeight = document.querySelector('.header').offsetHeight;
+        const header = document.querySelector('.header');
+        const headerHeight = header ? header.offsetHeight : 0;
         const targetPosition = target.getBoundingClientRect().top + window.scrollY - headerHeight;
         window.scrollTo({ top: targetPosition, behavior: 'smooth' });
         if (nav) nav.classList.remove('nav-open');
-        if (menuToggle) menuToggle.classList.remove('active');
+        if (menuToggle) {
+          menuToggle.classList.remove('active');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
       }
     });
   });
@@ -56,21 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Animated counters
-  function animateCounter(el) {
-    const target = parseInt(el.getAttribute('data-target'), 10);
-    if (isNaN(target)) return;  // guard against missing/invalid data-target
-    const startTime = performance.now();
-    function update(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / COUNTER_DURATION_MS, 1);
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      el.textContent = Math.floor(easeOutQuart * target).toLocaleString();
-      if (progress < 1) requestAnimationFrame(update);
-      else el.textContent = target.toLocaleString();
-    }
-    requestAnimationFrame(update);
-  }
-
   const impactNumbers = document.querySelectorAll('.impact-number');
   if (impactNumbers.length) {
     const counterObserver = new IntersectionObserver((entries) => {
@@ -88,6 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const animatedElements = document.querySelectorAll(
     '.program-card, .info-card, .involve-card, .gallery-item, .product-card'
   );
+  // NOTE: observer is declared before the callback to avoid the temporal dead zone
+  // that would occur if onFadeEntry referenced `fadeObserver` via a separate named fn.
   const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry, index) => {
       if (entry.isIntersecting) {
@@ -114,8 +125,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (message.length > 1000) { alert('Message is too long. Please keep it under 1000 characters.'); return; }
       const subject = encodeURIComponent('Website message from ' + name);
       const body    = encodeURIComponent('Name: ' + name + '\nEmail: ' + emailVal + '\n\nMessage:\n' + message);
-      window.location.href = 'mailto:himwalsociety@gmail.com?subject=' + subject + '&body=' + body;
+      // Reset before opening mailto so the form clears regardless of browser behaviour
       contactForm.reset();
+      window.location.href = 'mailto:himwalsociety@gmail.com?subject=' + subject + '&body=' + body;
     });
   }
 
@@ -125,20 +137,42 @@ document.addEventListener('DOMContentLoaded', function () {
     const tabs  = document.querySelectorAll(tabSelector);
     const items = document.querySelectorAll(itemSelector);
     if (!tabs.length) return;
-    tabs.forEach(tab => {
-      tab.addEventListener('click', function () {
-        tabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        const filter = this.getAttribute('data-filter');
-        items.forEach(item => {
-          item.style.display =
-            (filter === 'all' || item.getAttribute('data-category') === filter) ? '' : 'none';
-        });
+    function onTabClick() {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+      items.forEach(item => {
+        item.style.display =
+          (filter === 'all' || item.dataset.category === filter) ? '' : 'none';
       });
-    });
+    }
+    tabs.forEach(tab => tab.addEventListener('click', onTabClick));
   }
 
   initFilter('.filter-btn', '.gallery-item');
-  initFilter('.cat-tab',    '.product-card');
+
+  // Products filter — handles both cards and the section-divider banner
+  (function () {
+    const tabs     = document.querySelectorAll('.cat-tab');
+    const cards    = document.querySelectorAll('.product-card');
+    const dividers = document.querySelectorAll('.products-section-divider');
+    if (!tabs.length) return;
+
+    tabs.forEach(tab => tab.addEventListener('click', function () {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+
+      cards.forEach(card => {
+        card.style.display =
+          (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+      });
+
+      dividers.forEach(div => {
+        div.style.display =
+          (filter === 'all' || div.dataset.category === filter) ? '' : 'none';
+      });
+    }));
+  })();
 
 });

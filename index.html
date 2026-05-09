@@ -8,17 +8,18 @@
   <!-- Open Graph / Social sharing -->
   <meta property="og:title" content="HIMWAL — Empowering Himalayan Women">
   <meta property="og:description" content="Building sustainable livelihoods and preserving culture in Uttarakhand’s remote communities.">
-  <meta property="og:image" content="https://himwal.org/images/LOGO.jpg">
-  <meta property="og:url" content="https://himwal.org/">
+  <meta property="og:image" content="https://ASM0107.github.io/HIMWAL-himwallatest/images/LOGO.jpg">
+  <meta property="og:url"   content="https://ASM0107.github.io/HIMWAL-himwallatest/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#1a5f4a">
   <!-- JSON-LD structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "NGO",
     "name": "HIMWAL",
-    "alternateName": "Himalayan Women Awareness &amp; Livelihood Society",
+    "alternateName": "Himalayan Women Awareness & Livelihood Society",
     "url": "https://himwal.org",
     "email": "himwalsociety@gmail.com",
     "description": "HIMWAL empowers Himalayan women through education, skill development, and sustainable livelihoods in Uttarakhand, India.",
@@ -42,17 +43,59 @@
 
 <main id="main-content">
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-overlay"></div>
-  <div class="container hero-content">
-    <h1>Empowering Himalayan Women</h1>
-    <p>Building sustainable livelihoods and preserving culture in Uttarakhand's remote communities</p>
-    <div class="hero-buttons">
+<!-- Hero Section — Cinematic Parallax -->
+<section class="hero" id="hero">
+
+  <!-- Mountain background (parallax layer, slowest) -->
+  <div class="hero-layer hero-layer--bg" id="heroLayerBg"></div>
+
+  <!-- Mountain foreground silhouette (parallax layer, fastest) -->
+  <div class="hero-layer hero-layer--mountains" id="heroLayerMtn"></div>
+
+  <!-- Cinematic gradient overlay -->
+  <div class="hero-gradient"></div>
+
+  <!-- Content -->
+  <div class="hero-content-wrap" id="heroContentWrap">
+    <div class="hero-eyebrow" id="heroEyebrow">
+      <span class="hero-eyebrow-rule"></span>Uttarakhand, India
+    </div>
+    <h1 class="hero-title" id="heroTitle">
+      <span class="ht-word ht-empowering">Empowering</span>
+      <span class="ht-word ht-himalayan">Himalayan</span>
+      <span class="ht-word ht-women">Women</span>
+    </h1>
+    <p class="hero-subtitle" id="heroSubtitle">
+      Building sustainable livelihoods and preserving culture<br>in Uttarakhand's remote communities
+    </p>
+    <div class="hero-cta" id="heroButtons">
       <a href="programs.html" class="btn btn-primary btn-lg">Our Programs</a>
-      <a href="#contact" class="btn btn-outline btn-lg">Get Involved</a>
+      <a href="#contact" class="btn btn-hero-ghost btn-lg">Get Involved</a>
     </div>
   </div>
+
+  <!-- Stats ticker -->
+  <div class="hero-ticker" aria-hidden="true">
+    <div class="hero-ticker-track">
+      <span>812 Women Trained</span><span class="t-dot">◆</span>
+      <span>48 Villages Reached</span><span class="t-dot">◆</span>
+      <span>125 Livelihood Groups</span><span class="t-dot">◆</span>
+      <span>9 Years of Service</span><span class="t-dot">◆</span>
+      <span>Chamoli &amp; Dehradun</span><span class="t-dot">◆</span>
+      <span>812 Women Trained</span><span class="t-dot">◆</span>
+      <span>48 Villages Reached</span><span class="t-dot">◆</span>
+      <span>125 Livelihood Groups</span><span class="t-dot">◆</span>
+      <span>9 Years of Service</span><span class="t-dot">◆</span>
+      <span>Chamoli &amp; Dehradun</span><span class="t-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="hero-scroll-cue" id="heroScrollCue" aria-hidden="true">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-arrow"><span></span><span></span></div>
+  </div>
+
 </section>
 
 <!-- About Section -->
@@ -235,6 +278,10 @@
 <div id="site-footer"></div>
 
 <script src="layout.js"></script>
-<script src="scripts.js"></script>
+<!-- GSAP + ScrollTrigger (deferred so they are non-render-blocking) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous" defer></script>
+<script src="scripts.js" defer></script>
+<script src="hero.js" defer></script>
 </body>
 </html>

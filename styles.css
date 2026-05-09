@@ -714,43 +714,896 @@ h1, h2, h3, h4, h5, h6 {
 .footer-bottom p { font-size: 0.9rem; opacity: 0.7; }
 
 /* ========================================
-   Hero (index only)
+   Hero — Cinematic Parallax
    ======================================== */
 .hero {
   position: relative;
-  min-height: 100vh;
+  width: 100%;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  margin-top: var(--header-height);
+  background: #040f0a;
+}
+
+/* ---- Parallax layers ---- */
+.hero-layer {
+  position: absolute;
+  inset: -14% 0;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+.hero-layer--bg {
+  background-image: url('images/coverpage.jpeg');
+  background-position: center 35%;
+  z-index: 1;
+}
+
+/* Mountain foreground: darker bottom crop of the same bg for depth */
+.hero-layer--mountains {
+  z-index: 3;
+  background: none;
+  inset: auto 0 -6% 0;
+  height: 42%;
+  background-image: url('images/coverpage.jpeg');
+  background-position: center 90%;  /* show bottom/foreground of mountain photo */
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 50%, black 100%);
+  opacity: 0.55;
+  /* Extra darkening so it reads as a silhouette foreground */
+  filter: brightness(0.35) saturate(0.6);
+}
+
+/* ---- Cinematic gradient ---- */
+/* Keeps top 35% clear so mountains are visible,
+   then builds strong darkness toward bottom centre for text */
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    /* top gentle tint */
+    linear-gradient(to bottom, rgba(4,12,8,0.45) 0%, transparent 35%),
+    /* strong bottom-up vignette for ticker + text */
+    linear-gradient(to top,    rgba(4,12,8,0.97) 0%, rgba(4,12,8,0.75) 30%, transparent 65%),
+    /* radial centre shadow behind text */
+    radial-gradient(ellipse 80% 55% at 50% 62%, rgba(4,12,8,0.55) 0%, transparent 100%);
+}
+
+/* ---- Content: centred over hero ---- */
+.hero-content-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+  padding-bottom: 80px; /* lift above ticker */
+}
+
+/* ---- Eyebrow ---- */
+.hero-eyebrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url('images/coverpage.jpeg') center/cover no-repeat;
-  margin-top: var(--header-height);
+  gap: 14px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(14px);
 }
 
-.hero-overlay {
+.hero-eyebrow-rule {
+  display: block;
+  width: 32px;
+  height: 2px;
+  background: var(--color-secondary);
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+/* ---- Title: 3-line typographic stack ---- */
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 22px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.ht-word {
+  display: block;
+  font-family: var(--font-heading);
+}
+
+/* "Empowering" — small, italic, dimmed */
+.ht-empowering {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+/* "Himalayan" — massive, bold, white */
+.ht-himalayan {
+  font-size: clamp(3.8rem, 8.5vw, 7.5rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+}
+
+/* "Women" — same massive size, orange */
+.ht-women {
+  font-size: clamp(3.8rem, 8.5vw, 7.5rem);
+  font-weight: 700;
+  color: var(--color-secondary);
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.4);
+}
+
+/* ---- Subtitle ---- */
+.hero-subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+  max-width: 520px;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* ---- CTA ---- */
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.btn-hero-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(255,255,255,0.4);
+  background: transparent;
+  color: rgba(255,255,255,0.88);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.btn-hero-ghost:hover {
+  border-color: white;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ---- Stats ticker ---- */
+.hero-ticker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 7;
+  overflow: hidden;
+  padding: 12px 0;
+  border-top: 1px solid rgba(230,126,34,0.2);
+  background: rgba(4,12,8,0.82);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.hero-ticker-track {
+  display: inline-flex;
+  gap: 48px;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  animation: heroTicker 30s linear infinite;
+}
+.hero-ticker-track:hover { animation-play-state: paused; }
+
+.t-dot {
+  color: var(--color-secondary);
+  font-size: 0.4rem;
+  opacity: 0.65;
+  vertical-align: middle;
+}
+
+@keyframes heroTicker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---- Scroll cue ---- */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: scrollCueFade 1s ease 2.6s forwards;
+}
+
+.scroll-label {
+  font-size: 0.62rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+  font-family: var(--font-body);
+}
+
+.scroll-arrow { display: flex; flex-direction: column; gap: 3px; }
+
+.scroll-arrow span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-right: 1.5px solid rgba(255,255,255,0.3);
+  border-bottom: 1.5px solid rgba(255,255,255,0.3);
+  transform: rotate(45deg);
+  animation: scrollBounce 1.6s ease infinite;
+}
+.scroll-arrow span:nth-child(2) { animation-delay: 0.18s; opacity: 0.45; }
+
+@keyframes scrollBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%       { transform: rotate(45deg) translateY(5px); }
+}
+@keyframes scrollCueFade { to { opacity: 1; } }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .ht-himalayan, .ht-women { font-size: clamp(3rem, 13vw, 4.5rem); }
+  .hero-subtitle { font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .hero-cta { flex-direction: column; width: 100%; max-width: 260px; }
+  .ht-himalayan, .ht-women { font-size: clamp(2.6rem, 15vw, 3.5rem); }
+}
+
+
+
+/* ---- Parallax layer base ---- */
+.hero-layer {
+  position: absolute;
+  inset: -14% 0;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+/* ---- Mountain panorama background ---- */
+.hero-layer--bg {
+  background-image: url('images/coverpage.jpeg');
+  background-position: center 38%;
+  z-index: 1;
+}
+.hero-layer--bg::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(26,95,74,0.85), rgba(19,68,56,0.9));
+  background: rgba(4, 12, 8, 0.3);
+  pointer-events: none;
 }
 
-.hero-content {
+/* ---- Directional gradient: dark-left for text readability, open-right for photos ---- */
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,
+      rgba(4,12,8,0.96) 0%,
+      rgba(4,12,8,0.82) 28%,
+      rgba(4,12,8,0.5)  48%,
+      rgba(4,12,8,0.18) 68%,
+      transparent       100%
+    ),
+    linear-gradient(to top, rgba(4,12,8,0.88) 0%, transparent 38%),
+    linear-gradient(to bottom, rgba(4,12,8,0.5) 0%, transparent 18%);
+}
+
+/* ---- Mountain foreground silhouette ---- */
+.hero-layer--mountains {
+  z-index: 3;
+  background: none;
+  inset: auto 0 -5% 0;
+  height: 46%;
+  background-image: url('images/titleimg.jpeg');
+  background-position: center bottom;
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 100%);
+  opacity: 0.75;
+}
+
+/* ---- Content wrap: left text + right cards ---- */
+.hero-content-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding: 0 6vw;
+  gap: 0;
+}
+
+/* ---- LEFT: editorial text ---- */
+.hero-left {
+  width: 46%;
+  max-width: 520px;
+  flex-shrink: 0;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.hero-eyebrow-rule {
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: var(--color-secondary);
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+/* ---- Title: 3-line typographic stack ---- */
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 24px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateX(-24px);
+}
+
+.ht-word {
+  display: block;
+  font-family: var(--font-heading);
+  text-shadow: 0 3px 24px rgba(0,0,0,0.4);
+}
+
+/* "Empowering" — small, light, dimmed */
+.ht-empowering {
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+/* "Himalayan" — large, bold, white */
+.ht-himalayan {
+  font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+/* "Women" — same size, orange accent */
+.ht-women {
+  font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+  font-weight: 700;
+  color: var(--color-secondary);
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.75;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateX(-16px);
+}
+
+/* ---- CTA buttons ---- */
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateX(-16px);
+}
+
+/* Ghost button designed for dark hero backgrounds */
+.btn-hero-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(255,255,255,0.45);
+  background: transparent;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.btn-hero-ghost:hover {
+  border-color: white;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ---- RIGHT: floating photo cards ---- */
+.hero-cards {
+  flex: 1;
   position: relative;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hpc {
+  position: absolute;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,0.65),
+    0 0 0 1px rgba(255,255,255,0.1);
+  opacity: 0;
+}
+
+.hpc img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: translateZ(0);
+}
+
+/* Back card: tilted right, sits behind */
+.hpc--back {
+  width: clamp(180px, 20vw, 270px);
+  height: clamp(240px, 27vw, 360px);
+  top: 50%;
+  left: 52%;
+  transform: translateY(-58%) rotate(6deg);
   z-index: 1;
+}
+
+/* Front card: tilted left, overlaps back */
+.hpc--front {
+  width: clamp(210px, 23vw, 310px);
+  height: clamp(270px, 31vw, 410px);
+  top: 50%;
+  left: 22%;
+  transform: translateY(-46%) rotate(-3.5deg);
+  z-index: 2;
+}
+
+/* Stat caption on front card */
+.hpc--front figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 18px 18px;
+  background: linear-gradient(to top, rgba(4,12,8,0.9) 0%, transparent 100%);
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.hpc--front figcaption strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 700;
+  color: var(--color-secondary);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+/* ---- Stats ticker strip ---- */
+.hero-ticker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 7;
+  overflow: hidden;
+  padding: 11px 0;
+  border-top: 1px solid rgba(230,126,34,0.22);
+  background: rgba(4,12,8,0.75);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.hero-ticker-track {
+  display: inline-flex;
+  gap: 40px;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  animation: heroTicker 28s linear infinite;
+}
+.hero-ticker-track:hover { animation-play-state: paused; }
+
+.t-dot {
+  color: var(--color-secondary);
+  font-size: 0.45rem;
+  opacity: 0.7;
+  vertical-align: middle;
+}
+
+@keyframes heroTicker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---- Scroll cue ---- */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 56px;
+  left: 6vw;        /* aligned with left text column */
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  opacity: 0;
+  animation: scrollCueFade 1s ease 2.8s forwards;
+}
+
+.scroll-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.scroll-arrow {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.scroll-arrow span {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-right: 1.5px solid rgba(255,255,255,0.35);
+  border-bottom: 1.5px solid rgba(255,255,255,0.35);
+  transform: rotate(45deg);
+  animation: scrollBounce 1.6s ease infinite;
+}
+.scroll-arrow span:nth-child(2) { animation-delay: 0.18s; opacity: 0.5; }
+
+@keyframes scrollBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%       { transform: rotate(45deg) translateY(5px); }
+}
+@keyframes scrollCueFade { to { opacity: 1; } }
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .hero-left { width: 52%; }
+  .hpc--back  { left: 48%; }
+  .hpc--front { left: 16%; }
+}
+
+@media (max-width: 768px) {
+  .hero-content-wrap { align-items: flex-end; padding-bottom: 90px; }
+  .hero-left { width: 100%; max-width: 100%; }
+  .hero-cards { display: none; }
+  .hero-gradient {
+    background:
+      linear-gradient(to top, rgba(4,12,8,0.95) 0%, rgba(4,12,8,0.6) 50%, rgba(4,12,8,0.4) 100%);
+  }
+  .ht-himalayan, .ht-women { font-size: clamp(2.8rem, 11vw, 4rem); }
+  .hero-scroll-cue { left: 50%; transform: translateX(-50%); align-items: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-cta { flex-direction: column; }
+  .btn-hero-ghost { text-align: center; }
+  .ht-himalayan, .ht-women { font-size: clamp(2.4rem, 13vw, 3.2rem); }
+}
+
+
+
+
+
+
+
+
+
+/* ---- Layer 2: Community photo panels ---- */
+.hero-layer--photos {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: none;
+  inset: 0;              /* photos fill the full hero area */
+}
+
+.hero-photo {
+  position: absolute;
+  top: 0;
+  width: 48%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hero-photo--left  { left: 0; }
+.hero-photo--right { right: 0; }
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  /* No mix-blend-mode — luminosity on a full-viewport image is very expensive.
+     Use a simple semi-transparent dark overlay on the ::after instead. */
+  transform: translateZ(0); /* GPU layer promotion */
+}
+
+/* Fade photos into each other + into the edges.
+   Also apply the dark tinting here cheaply instead of via filter/blend. */
+.hero-photo--left::after,
+.hero-photo--right::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-photo--left::after {
+  background: linear-gradient(
+    to right,
+    rgba(5,18,12,0.72) 0%,
+    rgba(5,18,12,0.35) 30%,
+    rgba(5,18,12,0.55) 70%,
+    rgba(5,18,12,0.88) 100%
+  );
+}
+
+.hero-photo--right::after {
+  background: linear-gradient(
+    to left,
+    rgba(5,18,12,0.72) 0%,
+    rgba(5,18,12,0.35) 30%,
+    rgba(5,18,12,0.55) 70%,
+    rgba(5,18,12,0.88) 100%
+  );
+}
+
+/* ---- Layer 3: Mountain foreground silhouette ---- */
+.hero-layer--mountains {
+  z-index: 3;
+  background: none;
+  inset: auto 0 -6% 0;         /* anchored to bottom */
+  height: 52%;
+  background-image: url('images/titleimg.jpeg');
+  background-position: center bottom;
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 100%);
+  /* Cheap opacity instead of mix-blend-mode: multiply */
+  opacity: 0.82;
+}
+
+/* ---- Vignette overlay ---- */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    /* top fade to black */
+    linear-gradient(to bottom, rgba(5,15,10,0.4) 0%, transparent 28%),
+    /* bottom emergence gradient */
+    linear-gradient(to top, rgba(5,15,10,0.92) 0%, transparent 42%),
+    /* centre radial spotlight */
+    radial-gradient(ellipse 70% 60% at 50% 55%, transparent 30%, rgba(5,15,10,0.5) 100%);
+}
+
+/* ---- Content ---- */
+.hero-content-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  color: white;
-  max-width: 800px;
-  padding: 60px 20px;
+  padding: 0 20px;
+  padding-top: 40px;
 }
 
-.hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  color: white;
+.hero-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
   margin-bottom: 20px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  opacity: 0;            /* animated in by hero.js */
+  transform: translateY(12px);
 }
 
-.hero p { font-size: 1.25rem; opacity: 0.95; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
+  color: #ffffff;
+  line-height: 1.12;
+  margin-bottom: 22px;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(24px);
+}
 
-.hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.hero-title-accent {
+  color: var(--color-secondary);
+  position: relative;
+  display: inline-block;
+}
+
+/* Animated underline on the accent word */
+.hero-title-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary-light));
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s ease 1.4s;
+}
+.hero-title-accent.line-in::after { transform: scaleX(1); }
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: rgba(255,255,255,0.82);
+  max-width: 580px;
+  line-height: 1.75;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* reuse .hero-buttons from original — already defined; just override opacity for anim */
+.hero-content-wrap .hero-buttons {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* ---- Scroll cue ---- */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: scrollCueFade 1s ease 2.6s forwards;
+}
+
+.scroll-label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+.scroll-arrow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scroll-arrow span {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(255,255,255,0.45);
+  border-bottom: 2px solid rgba(255,255,255,0.45);
+  transform: rotate(45deg);
+  animation: scrollBounce 1.5s ease infinite;
+}
+
+.scroll-arrow span:nth-child(2) { animation-delay: 0.2s; opacity: 0.55; }
+
+@keyframes scrollBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%       { transform: rotate(45deg) translateY(5px); }
+}
+
+@keyframes scrollCueFade {
+  to { opacity: 1; }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .hero-photo { width: 50%; }
+  .hero-layer--mountains { height: 45%; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3rem); }
+}
+
+@media (max-width: 480px) {
+  .hero-photo--left  { width: 100%; opacity: 0.35; }
+  .hero-photo--right { display: none; }
+  .hero-layer--mountains { height: 38%; }
+}
 
 /* ========================================
    Animations
@@ -887,6 +1740,97 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 600px) {
   .impact-note { flex-direction: column; }
+}
+
+/* ========================================
+   Product Variants (multi-option products)
+   ======================================== */
+.product-variants {
+  margin: 0 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  font-size: 0.88rem;
+}
+
+.product-variant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+  line-height: 1.4;
+  transition: background var(--transition);
+}
+
+.product-variant-item:last-child { border-bottom: none; }
+.product-variant-item:hover { background: var(--color-bg-light); }
+
+.product-variant-item .v-name {
+  color: var(--color-text);
+  flex: 1;
+}
+
+.product-variant-item .v-price {
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.product-variant-note {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-bottom: 14px;
+}
+
+/* ---- Pulses section divider (spans full grid width) ---- */
+.products-section-divider {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 36px;
+  margin: 16px 0 8px;
+}
+
+.products-section-divider-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.products-section-divider-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.products-section-divider h2 {
+  font-size: 1.6rem;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.products-section-divider p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+/* Cards without a photo: tinted banner instead */
+.product-image.product-icon-banner {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+}
+
+.product-icon-banner .product-category-icon {
+  font-size: 3rem;
+  line-height: 1;
 }
 
 /* ========================================
